@@ -15,15 +15,4 @@
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Remove="config.json" />
-      <Content Include="config.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="UserGame.cs" />
-    </ItemGroup>
-
 </Project>

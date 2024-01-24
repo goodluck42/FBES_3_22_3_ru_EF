@@ -1,13 +1,6 @@
-namespace DataAnnotations;
-class ConsoleController
+namespace FluentAPI;
+class ConsoleController(ApplicationDbContext dbContext)
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public ConsoleController(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public void Start()
     {
         return;
@@ -31,14 +24,14 @@ class ConsoleController
                     break;
                 case 1:
                 {
-                    _dbContext.Users.Add(new User
+                    dbContext.Users.Add(new User
                     {
                         BirthDate = DateTime.Now,
                         FirstName = Console.ReadLine()!,
                         LastName = Console.ReadLine()!
                     });
 
-                    _dbContext.SaveChanges();
+                    dbContext.SaveChanges();
 
                     break;
                 }
@@ -49,7 +42,7 @@ class ConsoleController
 
                     int id = int.Parse(Console.ReadLine()!);
 
-                    var user = _dbContext.Users.FirstOrDefault(u => u.Id == id);
+                    var user = dbContext.Users.FirstOrDefault(u => u.Id == id);
 
                     if (user != null)
                     {
@@ -68,7 +61,7 @@ class ConsoleController
 
                 case 3:
                 {
-                    var users = _dbContext.Users.ToList();
+                    var users = dbContext.Users.ToList();
 
                     users.ForEach(Console.WriteLine);
 
@@ -96,25 +89,25 @@ class ConsoleController
                         Id = int.Parse(Console.ReadLine()!)
                     };
 
-                    _dbContext.Users.Remove(user);
+                    dbContext.Users.Remove(user);
 
-                    _dbContext.SaveChanges();
+                    dbContext.SaveChanges();
 
                     break;
                 }
                 case 5:
                 {
                     var id = int.Parse(Console.ReadLine()!);
-                    var user = _dbContext.Users.FirstOrDefault(u => u.Id == id);
+                    var user = dbContext.Users.FirstOrDefault(u => u.Id == id);
 
                     if (user != null)
                     {
                         user.FirstName = user.FirstName.ToUpper();
                         user.LastName = user.LastName.ToUpper();
 
-                        _dbContext.Users.Update(user);
+                        dbContext.Users.Update(user);
 
-                        _dbContext.SaveChanges();
+                        dbContext.SaveChanges();
                     }
                     
                     break;

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Bogus;
 
-namespace DataAnnotations;
+namespace FluentAPI;
 
 class ApplicationDbContext : DbContext
 {
@@ -59,10 +59,50 @@ class ApplicationDbContext : DbContext
         //         });
         // });
 
-        //modelBuilder.Entity<UserGame>(entity => { entity.HasKey(e => new { e.UserId, e.GameId }); });
+        modelBuilder.Entity(typeof(User));
+        // 1 2 OK
+        // 2 1 OK
+        // 1 2 NOT OK
 
+        modelBuilder.Entity<User>().HasKey(u => u.Id);
+        modelBuilder.Entity<User>().ToTable("user_table");
+        
         modelBuilder.Entity<User>(entity =>
         {
+            entity.HasKey(u => u.Id);
+            entity.ToTable("user_table");
+            entity.HasIndex(u => u.Phone)
+                .IsUnique();
+
+            entity.Property(u => u.Id)
+                .HasColumnName("id");
+
+            entity.Property(u => u.FirstName)
+                .HasColumnName("name")
+                .HasMaxLength(128);
+
+            entity.Property(u => u.LastName)
+                .HasColumnName("surname")
+                .HasMaxLength(128);
+            
+            entity.Property(u => u.BirthDate)
+                .HasColumnName("date_of_birth");
+
+            entity.Property(u => u.Phone)
+                .HasColumnName("phone")
+                .HasMaxLength(64);
+            
+            // one-to-one
+            entity.HasOne(u => u.UserAddress)
+                .WithOne(ua => ua.User)
+                .HasForeignKey<UserAddress>()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // one-to-many
+            entity.HasMany(u => u.Accounts)
+                .WithOne(a => a.User);
+
+            // many-to-many
             entity.HasMany(u => u.Games)
                 .WithMany(g => g.Users);
         });
@@ -74,5 +114,4 @@ class ApplicationDbContext : DbContext
     public DbSet<UserAddress> UserAddresses { get; set; }
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Game> Games { get; set; }
-    //public DbSet<UserGame> UserGames { get; set; }
 }
