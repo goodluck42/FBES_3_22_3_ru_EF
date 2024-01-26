@@ -13,11 +13,10 @@ public class User
     public string LastName { get; set; } = null!;
     public DateTime BirthDate { get; set; }
     public string Phone { get; set; } = null!;
-    public ICollection<Account> Accounts { get; set; } = null!;
-    
-    public int UserAddressId { get; set; }
-    public UserAddress UserAddress { get; set; } = null!;
-    public ICollection<Game> Games { get; set; } = null!;
+    public virtual ICollection<Account> Accounts { get; set; } = null!;
+    public int? UserAddressId { get; set; }
+    public virtual UserAddress? UserAddress { get; set; }
+    public virtual ICollection<Game>? Games { get; set; }
     public override string ToString()
     {
         var builder = new StringBuilder();

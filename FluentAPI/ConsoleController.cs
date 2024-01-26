@@ -1,14 +1,18 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Proxies;
+using Microsoft.Extensions.Configuration;
+
 namespace FluentAPI;
-class ConsoleController(ApplicationDbContext dbContext)
+class ConsoleController(ApplicationDbContext dbContext, IConfiguration configuration)
 {
     public void Start()
     {
-        return;
         bool flag = true;
         
         Console.WriteLine("0 - Exit");
         Console.WriteLine("1 - Insert a User");
-        Console.WriteLine("2 - Get User by Id");
+        Console.WriteLine("2 - Get User by Id (Lazy)");
+        Console.WriteLine("20 - Get User by Id (Eager)");
         Console.WriteLine("3 - Get all Users");
         Console.WriteLine("4 - Delete User by Id");
         Console.WriteLine("5 - Update User by Id");
@@ -40,6 +44,8 @@ class ConsoleController(ApplicationDbContext dbContext)
                 {
                     Console.Write("Enter id:");
 
+                    using var userDbContext = new ApplicationDbContext(configuration);
+                
                     int id = int.Parse(Console.ReadLine()!);
 
                     var user = dbContext.Users.FirstOrDefault(u => u.Id == id);
@@ -50,6 +56,54 @@ class ConsoleController(ApplicationDbContext dbContext)
                         Console.WriteLine(user.BirthDate);
                         Console.WriteLine(user.FirstName);
                         Console.WriteLine(user.LastName);
+                        Console.WriteLine(user.UserAddress == null ? "does not have address" : "has address");
+
+                        foreach (var account in user.Accounts)
+                        {
+                            Console.WriteLine($"Login: {account.Login}");
+                            Console.WriteLine($"PasswordHash: {account.PasswordHash}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Not found");
+                    }
+
+                    break;
+                }
+
+                case 20:
+                {
+                    Console.Write("Enter id:");
+
+                    var arr = new int[3] { 1, 2, 3};
+                    using var userDbContext = new ApplicationDbContext(configuration);
+
+                    userDbContext.ChangeTracker.LazyLoadingEnabled = false;
+                    
+                    int id = int.Parse(Console.ReadLine()!);
+
+                    // Eager loading
+
+                    var user = dbContext.Users
+                        .Include(u => u.Accounts)
+                        .ThenInclude(a => a.User)
+                        .Include(u => u.UserAddress)
+                        .FirstOrDefault(u => u.Id == id);
+                    
+                    if (user != null)
+                    {
+                        Console.WriteLine(user.Id);
+                        Console.WriteLine(user.BirthDate);
+                        Console.WriteLine(user.FirstName);
+                        Console.WriteLine(user.LastName);
+                        Console.WriteLine(user.UserAddress == null ? "does not have address" : "has address");
+
+                        foreach (var account in user.Accounts)
+                        {
+                            Console.WriteLine($"Login: {account.Login}");
+                            Console.WriteLine($"PasswordHash: {account.PasswordHash}");
+                        }
                     }
                     else
                     {

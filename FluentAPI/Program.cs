@@ -1,4 +1,5 @@
-﻿using FluentAPI;
+﻿using System.Text;
+using FluentAPI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.EntityFrameworkCore.SqlServer;
@@ -28,6 +29,9 @@ var provider = serviceCollection.BuildServiceProvider();
 var consoleController = provider.GetService<ConsoleController>()!;
 
 consoleController.Start();
+
+Console.InputEncoding = Encoding.Unicode;
+Console.OutputEncoding = Encoding.Unicode;
 
 public static partial class Program
 {

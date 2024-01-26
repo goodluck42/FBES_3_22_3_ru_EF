@@ -12,5 +12,5 @@ public class UserAddress
     [MaxLength(1024)] public string City { get; set; } = null!;
     
     public int UserId { get; set; }
-    public User User { get; set; } = null!;
+    public virtual User User { get; set; } = null!;
 }
